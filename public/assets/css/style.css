@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+
+body {
+    font-family: "Lato", sans-serif;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-size: 12px !important;
+}
+.btnsize {
+    font-size: 10px;
+}
+.dt-button {
+    background: #ff4742;
+    border: 1px solid #ff4742;
+    border-radius: 6px;
+    box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+    box-sizing: border-box;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: nunito, roboto, proxima-nova, "proxima nova", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 14px;
+    min-height: 40px;
+    outline: 0;
+    padding: 12px 15px;
+    text-align: center;
+    text-rendering: geometricprecision;
+    text-transform: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
+}
+
+.dt-button:hover,
+.dt-button:active {
+    background-color: initial;
+    background-position: 0 0;
+    color: #ff4742;
+}
+
+.dt-button:active {
+    opacity: 0.5;
+}
+.time{
+    color: #ff4742;
+    font-size: 18px;
+    margin-top: 10px;
+}
