@@ -1,10 +1,10 @@
 @php
-use App\Models\Theme;
-$theme = Theme::findOrFail(1);
+    use App\Models\Theme;
+    $theme = Theme::findOrFail(1);
 
-use Carbon\Carbon;
-$time = Carbon::parse($theme->close);
-$close = $time;
+    use Carbon\Carbon;
+    $time = Carbon::parse($theme->close);
+    $close = $time;
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -115,6 +115,78 @@ $close = $time;
             color: black;
             border-radius: 10px;
         }
+
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        #inactivity-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+        }
+
+        .inactivity-wrapper {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px solid #ffffff30;
+            box-shadow: 0 0 20px #00000070;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            max-width: 90%;
+        }
+
+        #inactive-time {
+            font-size: 1.5em;
+            color: #00ffcc;
+            animation: fadeIn 1s forwards;
+        }
+
+        #inactive-time.animated {
+            animation: tick 0.4s ease-in-out, fadeIn 1s forwards;
+        }
+
+        #submit-warning {
+            font-size: 0.8em;
+            color: #ffc107;
+            transition: opacity 0.5s ease-in-out;
+            opacity: 1;
+        }
+
+        @keyframes tick {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
@@ -122,6 +194,14 @@ $close = $time;
     <div class="container shadow">
         <div class="row justify-content-center align-items-center">
             <div class="col-md-12">
+                <div id="inactivity-overlay">
+                    <div class="inactivity-wrapper">
+                        <div class="label">You've been inactive</div>
+                        <div id="inactive-time">0m 00s</div>
+                        <div id="submit-warning">Please submit the form soon!</div>
+                    </div>
+                </div>
+
                 <div class="card-header text-center">
                     <a href="{{ $theme->url }}">
                         <img width="150px" src="{{ asset('assets/img/' . $theme->logo) }}" alt="">
@@ -129,394 +209,294 @@ $close = $time;
                     <!-- <div class="time py-1" id="countdown"></div> -->
                     @if (Carbon::now() <= $close)
                         <div class="session-info shadow-sm">
-                        <h1 id="sessionTime"></h1>
+                            <h1 id="sessionTime"></h1>
+                        </div>
+                    @endif
                 </div>
-                @endif
-            </div>
-            <div class="card shadow">
-                @if ($form_type == 'store')
-                @if (Carbon::now() <= $close) <div class="card-body">
-                    @include('validate')
-                    <form action="{{ route('form.store') }}" method="POST" class="was-validated">
-                        @csrf
-                        <h5 class="text-center text-uppercase"><span class="text-decoration-underline">Personal Details</span></h5>
-                        <p class="text-center">This is for billing</p>
-                        <div class="border p-3 shadow my-3">
-                            <div class="mb-2">
-                                <label for="validationName" class="form-label">
-                                    <b>Full Name <span class="text-danger">*</span></b>
-                                </label>
-                                <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
-                                <div class="invalid-feedback text-uppercase">Enter Your Full Name</div>
-                            </div>
-                            <hr>
-                            <div class="mb-2">
-                                <label for="validationEmail" class="form-label">
-                                    <b>Official Email Address<span class="text-danger">*</span></b>
-                                </label>
-                                <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
-                                <div class="invalid-feedback text-uppercase">Enter Your Official Email</div>
-                            </div>
-                            <hr>
-                            <div class="mb-2">
-                                <label for="validationPhone" class="form-label">
-                                    <b>Official Contact Number<span class="text-danger">*</span></b>
-                                </label>
-                                <input type="text" name="phone" class="form-control" value="{{ old('phone') }}" required>
-                                <div class="invalid-feedback text-uppercase">Enter Your Official Contact Number</div>
-                            </div>
-                            <hr>
-                            <div class="mb-2">
-                                <label for="validationName" class="form-label">
-                                    <b>Designation <span class="text-danger">*</span></b>
-                                </label>
-                                <input type="text" name="designation" class="form-control" value="{{ old('designation') }}" required>
-                                <div class="invalid-feedback text-uppercase">Enter Your Designation</div>
-                            </div>
-                            <hr>
-                            <div class="mb-2">
-                                <label for="validationPhone" class="form-label">
-                                    <b>Agency / Organization <span class="text-danger">*</span></b>
-                                </label>
-                                <input type="text" name="organization" class="form-control" value="{{ old('organization') }}" required>
-                                <div class="invalid-feedback text-uppercase">Enter Your Agency / Organization Name
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="mb-2">
-                                <label for="validationPhone" class="form-label">
-                                    <b>Office Address <span class="text-danger">*</span></b>
-                                </label>
-                                <input type="text" name="address" class="form-control" value="{{ old('address') }}" required>
-                                <div class="invalid-feedback text-uppercase">Enter Your Office Address</div>
-                            </div>
-                            {{-- <div class="mb-2">
+                <div class="card shadow">
+                    @if ($form_type == 'store')
+                        @if (Carbon::now() <= $close)
+                            <div class="card-body">
+                                @include('validate')
+                                <form action="{{ route('form.store') }}" method="POST" class="was-validated">
+                                    @csrf
+                                    <h5 class="text-center text-uppercase"><span
+                                            class="text-decoration-underline">Personal Details</span></h5>
+                                    <p class="text-center">This is for billing</p>
+                                    <div class="border p-3 shadow my-3">
+                                        <div class="mb-2">
+                                            <label for="validationName" class="form-label">
+                                                <b>Full Name <span class="text-danger">*</span></b>
+                                            </label>
+                                            <input type="text" name="name" class="form-control"
+                                                value="{{ old('name') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your Full Name</div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
+                                            <label for="validationEmail" class="form-label">
+                                                <b>Official Email Address<span class="text-danger">*</span></b>
+                                            </label>
+                                            <input type="email" name="email" class="form-control"
+                                                value="{{ old('email') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your Official Email</div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
+                                            <label for="validationPhone" class="form-label">
+                                                <b>Official Contact Number<span class="text-danger">*</span></b>
+                                            </label>
+                                            <input type="text" name="phone" class="form-control"
+                                                value="{{ old('phone') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your Official Contact
+                                                Number</div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
+                                            <label for="validationName" class="form-label">
+                                                <b>Designation <span class="text-danger">*</span></b>
+                                            </label>
+                                            <input type="text" name="designation" class="form-control"
+                                                value="{{ old('designation') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your Designation</div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
                                             <label for="validationPhone" class="form-label">
                                                 <b>Agency / Organization <span class="text-danger">*</span></b>
                                             </label>
-                                            <input list="organisations" type="text" name="organization"
-                                                class="form-control" value="{{ old('organization') }}" required>
-                            <!--<datalist id="organisations">-->
-                            <!--    @foreach ($invoices as $invoice)
--->
-                            <!--        <option value="{{ $invoice->name }}">-->
-                            <!--
-@endforeach-->
-                            <!--</datalist>-->
-                            <div class="invalid-feedback text-uppercase">Enter Your Agency /
-                                Organization Name</div>
-                        </div> --}}
-                        {{-- <div class="mb-2">
+                                            <input type="text" name="organization" class="form-control"
+                                                value="{{ old('organization') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your Agency /
+                                                Organization Name
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
                                             <label for="validationPhone" class="form-label">
                                                 <b>Office Address <span class="text-danger">*</span></b>
                                             </label>
                                             <input type="text" name="address" class="form-control"
                                                 value="{{ old('address') }}" required>
-                        <div class="invalid-feedback text-uppercase">Enter Your Office Address</div>
-            </div> --}}
+                                            <div class="invalid-feedback text-uppercase">Enter Your Office Address
+                                            </div>
+                                        </div>
+                                    </div>
 
-            <!--<div class="mb-2">-->
-            <!--    <label for="validationPhone" class="form-label">-->
-            <!--        <b>Emergency Contact Number <span class="text-danger">*</span></b>-->
-            <!--    </label>-->
-            <!--    <input type="text" name="phone1" class="form-control"-->
-            <!--        value="{{ old('phone1') }}" required>-->
-            <!--    <div class="invalid-feedback text-uppercase">Enter Your Emergency Contact Number</div>-->
-            <!--</div>-->
-        </div>
+                                    <h5 class="text-center text-uppercase"><span
+                                            class="text-decoration-underline">Campaign Details</span></h5>
 
-        <h5 class="text-center text-uppercase"><span class="text-decoration-underline">Campaign Details</span></h5>
-
-        <div class="border p-3 shadow my-3">
-            <div class="mb-2">
-                <label for="validationName" class="form-label">
-                    <b>Campaign Name <span class="text-danger">*</span></b>
-                </label>
-                <input type="text" name="campaign_name" class="form-control" value="{{ old('campaign_name') }}" required>
-                <div class="invalid-feedback text-uppercase">Enter Your Campaign NAME</div>
-            </div>
-            <hr>
-            <div class="mb-2">
-                <label for="validationPhone" class="form-label">
-                    <b>Select Your Nomination Category <span class="text-danger">*</span></b>
-                </label>
-                <select name="category" class="form-select">
-    <option value="">SELECT NOMINATION CATEGORY *</option>
-    <option value="ART DIRECTION">ART DIRECTION</option>
-    <option value="B2B (NEW)">B2B (NEW)</option>
-    <option value="BEST CAMPAIGN BY NEW AGENCY">BEST CAMPAIGN BY NEW AGENCY</option>
-    <option value="BEST CREATIVE STRATEGY">BEST CREATIVE STRATEGY</option>
-    <option value="BEST UNPUBLISHED WORK (NEW)">BEST UNPUBLISHED WORK (NEW)</option>
-    <option value="BEST USE OF BRANDED CONTENT">BEST USE OF BRANDED CONTENT</option>
-    <option value="BEST USE OF DIGITAL MEDIA">BEST USE OF DIGITAL MEDIA</option>
-    <option value="BEST USE OF INFLUENCER">BEST USE OF INFLUENCER</option>
-    <option value="BRAND EXPERIENCE & PROMOTION">BRAND EXPERIENCE & PROMOTION</option>
-    <option value="CAMPAIGN FOR POSITIVITY (NEW)">CAMPAIGN FOR POSITIVITY (NEW)</option>
-    <option value="CAMPAIGN FOR SUSTAINABILITY">CAMPAIGN FOR SUSTAINABILITY</option>
-    <option value="CAMPAIGN FOR WOMEN">CAMPAIGN FOR WOMEN</option>
-    <option value="COPYWRITING">COPYWRITING</option>
-    <option value="CREATIVE BUSINESS TRANSFORMATION (NEW)">CREATIVE BUSINESS TRANSFORMATION (NEW)</option>
-    <option value="EFFICACY">EFFICACY</option>
-    <option value="FILM">FILM</option>
-    <option value="FILM CRAFT">FILM CRAFT</option>
-    <option value="INNOVATION IN MEDIA">INNOVATION IN MEDIA</option>
-    <option value="INTEGRATED CAMPAIGN">INTEGRATED CAMPAIGN</option>
-    <option value="LONG TERM BRAND PLATFORM (NEW)">LONG TERM BRAND PLATFORM (NEW)</option>
-    <option value="LUXURY (NEW)">LUXURY (NEW)</option>
-    <option value="MOST CREATIVE USE OF MEDIA">MOST CREATIVE USE OF MEDIA</option>
-    <option value="MOST EFFECTIVE USE OF MEDIA">MOST EFFECTIVE USE OF MEDIA</option>
-    <option value="MUSIC / JINGLE">MUSIC / JINGLE</option>
-    <option value="NATIVE">NATIVE</option>
-    <option value="OUTDOOR">OUTDOOR</option>
-    <option value="PACKAGING">PACKAGING</option>
-    <option value="PR">PR</option>
-    <option value="PRINT & PUBLISHING">PRINT & PUBLISHING</option>
-    <option value="RURAL MARKETING">RURAL MARKETING</option>
-    <option value="SMALL-BUDGET MEDIA CAMPAIGN">SMALL-BUDGET MEDIA CAMPAIGN</option>
-    <option value="TITANIUM">TITANIUM</option>
-</select>
-
-
-
-
-                <div class="invalid-feedback text-uppercase">SELECT YOUR NOMINATION
-                    CATEGORY</div>
-            </div>
-            <hr>
-            <div class="mb-2">
-                <label for="validationName" class="form-label">
-                    <b>Advertising Agency/Organization <span class="text-danger">*</span></b>
-                </label>
-                <input type="text" name="agency" class="form-control" value="{{ old('agency') }}" required>
-                <div class="invalid-feedback text-uppercase">Enter Your Advertising Agency/Organization
-                </div>
-            </div>
-            <hr>
-            <div class="mb-2">
-                <label for="validationName" class="form-label">
-                    <b>Production House <span class="text-danger">*</span></b>
-                </label>
-                <input type="text" name="production_house" class="form-control" value="{{ old('production_house') }}" required>
-                <div class="invalid-feedback text-uppercase">Enter Your Production house
-                </div>
-            </div>
-            <hr>
-            <div class="mb-2">
-                <label for="validationName" class="form-label">
-                    <b>Brand Name <span class="text-danger">*</span></b>
-                </label>
-                <input type="text" name="brand" class="form-control" value="{{ old('brand') }}" required>
-                <div class="invalid-feedback text-uppercase">Enter Your brand name</div>
-            </div>
-            <hr>
-            <div class="mb-2">
-                <label for="validationName" class="form-label">
-                    <b>Type of Product Or Service <span class="text-danger">*</span></b>
-                </label>
-                <input type="text" name="type" class="form-control" value="{{ old('type') }}" required>
-                <div class="invalid-feedback text-uppercase">Enter Your Type of Product Or
-                    Service</div>
-            </div>
-            <hr>
-            <div class="mb-2">
-                <label for="validationPhone" class="form-label">
-                    <b>Campaign Duration (Start Date - End Date)</b>
-                </label>
-                <input type="text" id="daterange" name="date" class="form-control" value="{{ old('date') }}">
-                <div class="invalid-feedback text-uppercase">Enter Your Campaign Duration
-                </div>
-                <p class="text-danger mt-2" style="font-size:.875em">CAMPAIGN DATE SHOULD
-                    MATCH THE NF AND NOC</p>
-            </div>
-            <hr>
-            <div class="mb-2">
-                <label for="validationPhone" class="form-label">
-                    <b>Select Your Cost of Campaign <span class="text-danger">*</span></b>
-                </label>
-                <select name="cost" class="form-select">
-                    <option value="">Select Cost of Campaign *</option>
-                    <option value="BDT 0 - BDT 49,999">BDT 0 - BDT 49,999</option>
-                    <option value="BDT 50,000 - BDT 99,999">BDT 50,000 - BDT 99,999
-                    </option>
-                    <option value="BDT 100,000 - BDT 249,999">BDT 100,000 - BDT 249,999
-                    </option>
-                    <option value="BDT 250,000 - BDT 499,999">BDT 250,000 - BDT 499,999
-                    </option>
-                    <option value="BDT 500,000 - BDT 999,999">BDT 500,000 - BDT 999,999
-                    </option>
-                    <option value="BDT 1 Million - BDT 9.9 Million">BDT 1 Million - BDT 9.9
-                        Million</option>
-                    <option value="Over BDT 10 Million">Over BDT 10 Million</option>
-                </select>
-                <div class="invalid-feedback text-uppercase">SELECT YOUR Campaign Cost
-                </div>
-            </div>
-
-            {{-- <div class="mb-2">
-                                            <label for="validationPhone" class="form-label">
-                                                <b>Agency / Organization <span class="text-danger">*</span></b>
+                                    <div class="border p-3 shadow my-3">
+                                        <div class="mb-2">
+                                            <label for="validationName" class="form-label">
+                                                <b>Campaign Name <span class="text-danger">*</span></b>
                                             </label>
-                                            <input list="organisations" type="text" name="organization"
-                                                class="form-control" value="{{ old('organization') }}" required>
-            <!--<datalist id="organisations">-->
-            <!--    @foreach ($invoices as $invoice)
--->
-            <!--        <option value="{{ $invoice->name }}">-->
-            <!--
-@endforeach-->
-            <!--</datalist>-->
-            <div class="invalid-feedback text-uppercase">Enter Your Agency /
-                Organization Name</div>
-        </div> --}}
-        {{-- <div class="mb-2">
+                                            <input type="text" name="campaign_name" class="form-control"
+                                                value="{{ old('campaign_name') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your Campaign NAME</div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
                                             <label for="validationPhone" class="form-label">
-                                                <b>Office Address <span class="text-danger">*</span></b>
+                                                <b>Select Your Nomination Category <span
+                                                        class="text-danger">*</span></b>
                                             </label>
-                                            <input type="text" name="address" class="form-control"
-                                                value="{{ old('address') }}" required>
-        <div class="invalid-feedback text-uppercase">Enter Your Office Address</div>
-    </div> --}}
-    <!--<div class="mb-2">-->
-    <!--    <label for="validationPhone" class="form-label">-->
-    <!--        <b>Emergency Contact Number <span class="text-danger">*</span></b>-->
-    <!--    </label>-->
-    <!--    <input type="text" name="phone1" class="form-control"-->
-    <!--        value="{{ old('phone1') }}" required>-->
-    <!--    <div class="invalid-feedback text-uppercase">Enter Your Emergency Contact Number</div>-->
-    <!--</div>-->
-    </div>
-    <u>
-        <h5 class="text-center text-uppercase">Campaign Story</h5>
-    </u>
-    <!--<p class="text-center text-muted">Detail Information About Your Campaign</p>-->
-    <div class="border p-3 shadow my-3">
-
-
-        <!--<div class="mb-2">-->
-        <!--    <label for="validationBackground" class="form-label">-->
-        <!--        <b>BACKGROUND <span class="text-danger">*</span></b> --->
-        <!--        <span class="text-danger">(Not more than 150 words)</span>-->
-        <!--    </label>-->
-        <!--    <p id="backgroundcount" class="text-left text-center mb-1 d-none count">-->
-        <!--        Word Count: <span id="display_backgroundcount">0</span> |-->
-        <!--        Words left: <span id="backgroundword_left">150</span>-->
-        <!--    </p>-->
-        <!--    <textarea name="background" id="background" class="form-control" cols="10"-->
-        <!--        rows="3" required>{{ old('background') }}</textarea>-->
-        <!--    <div class="invalid-feedback">Enter Your Background of the Nomination</div>-->
-        <!--</div>-->
-
-        <!--<div class="mb-2">-->
-        <!--    <label for="validationObjectives" class="form-label">-->
-        <!--        <b>OBJECTIVES <span class="text-danger">*</span></b> --->
-        <!--        <span class="text-danger">(Not more than 50 words)</span>-->
-        <!--    </label>-->
-        <!--    <p id="objectivescount" class="text-left text-center mb-1 d-none count">-->
-        <!--        Word Count: <span id="display_objectivescount">0</span> |-->
-        <!--        Words left: <span id="objectivesword_left">50</span>-->
-        <!--    </p>-->
-        <!--    <textarea name="objectives" id="objectives" class="form-control" cols="10"-->
-        <!--        rows="3" required>{{ old('objectives') }}</textarea>-->
-        <!--    <div class="invalid-feedback">Enter Your Objectives of the Nomination</div>-->
-        <!--</div>-->
-
-        <!--<div class="mb-2">-->
-        <!--    <label for="validationCoreIdea" class="form-label">-->
-        <!--        <b>CORE IDEA <span class="text-danger">*</span></b> --->
-        <!--        <span class="text-danger">(Not more than 100 words)</span>-->
-        <!--    </label>-->
-        <!--    <p id="coreideacount" class="text-left text-center mb-1 d-none count">-->
-        <!--        Word Count: <span id="display_coreideacount">0</span> |-->
-        <!--        Words left: <span id="coreideaword_left">100</span>-->
-        <!--    </p>-->
-        <!--    <textarea name="core_idea" id="core_idea" class="form-control" cols="10"-->
-        <!--        rows="3" required>{{ old('core_idea') }}</textarea>-->
-        <!--    <div class="invalid-feedback">Enter Your Core Idea of the Nomination</div>-->
-        <!--</div>-->
-
-        <!--<div class="mb-2">-->
-        <!--    <label for="validationExecution" class="form-label">-->
-        <!--        <b>EXECUTION <span class="text-danger">*</span></b> --->
-        <!--        <span class="text-danger">(Not more than 150 words)</span>-->
-        <!--    </label>-->
-        <!--    <p id="executioncount" class="text-left text-center mb-1 d-none count">-->
-        <!--        Word Count: <span id="display_executioncount">0</span> |-->
-        <!--        Words left: <span id="executionword_left">150</span>-->
-        <!--    </p>-->
-        <!--    <textarea name="execution" id="execution" class="form-control" cols="10"-->
-        <!--        rows="3" required>{{ old('execution') }}</textarea>-->
-        <!--    <div class="invalid-feedback">Enter Your Execution of the Nomination</div>-->
-        <!--</div>-->
-
-        <!--<div class="mb-2">-->
-        <!--    <label for="validationResult" class="form-label">-->
-        <!--        <b>RESULT <span class="text-danger">*</span></b> --->
-        <!--        <span class="text-danger">(Not more than 150 words)</span>-->
-        <!--    </label>-->
-        <!--    <p id="resultcount" class="text-left text-center mb-1 d-none count">-->
-        <!--        Word Count: <span id="display_resultcount">0</span> |-->
-        <!--        Words left: <span id="resultword_left">150</span>-->
-        <!--    </p>-->
-        <!--    <textarea name="result" id="result" class="form-control" cols="10"-->
-        <!--        rows="3" required>{{ old('result') }}</textarea>-->
-        <!--    <div class="invalid-feedback">Enter Your Result of the Nomination</div>-->
-        <!--</div>-->
-
-
-        <div class="my-4">
-            <label for="validationPhone" class="form-label">
-                Please Share the link containing Nomination Form, PPT, NOC, Case AV,
-                Campaign AV, Creatives, Case Board, Insights, and Logo <b><u>(Template & Format
-                        provided on the website)</u></b><span class="text-danger">*</span>
-            </label>
-            <input type="text" name="link" placeholder="Share link here" class="form-control" value="{{ old('link') }}" required>
-            <!--    <div class="invalid-feedback text-uppercase">Share link here</div>-->
-            <!--</div>-->
-        </div>
-    </div>
-    <u>
-        <h5 class="text-center text-uppercase">Team Member</h5>
-    </u>
-    <!--<p class="text-center text-muted">Detail Information About Your Team Member</p>-->
-    <div class="border p-3 shadow my-3">
-        <div class="my-4">
-            <div class="form-group order member-btn-opt">
-                <div class="my-4">
-                    <label for="validationPhone" class="form-label">
-                        <b>Please Share the Google Doc link</b> of the detailed information about your Team Members in the campaign (Campaign Title, Name & Designation)</u></b><span class="text-danger">*</span>
-                    </label>
-                    <input type="text" name="member_name" placeholder="Share link here" class="form-control" value="{{ old('member_name') }}" required>
-                    <!--    <div class="invalid-feedback text-uppercase">Share link here</div>-->
-                    <!--</div>-->
+                                            <select name="category" class="form-select">
+                                                <option value="">SELECT NOMINATION CATEGORY *</option>
+                                                <option value="ART DIRECTION">ART DIRECTION</option>
+                                                <option value="B2B (NEW)">B2B (NEW)</option>
+                                                <option value="BEST CAMPAIGN BY NEW AGENCY">BEST CAMPAIGN BY NEW AGENCY
+                                                </option>
+                                                <option value="BEST CREATIVE STRATEGY">BEST CREATIVE STRATEGY</option>
+                                                <option value="BEST UNPUBLISHED WORK (NEW)">BEST UNPUBLISHED WORK (NEW)
+                                                </option>
+                                                <option value="BEST USE OF BRANDED CONTENT">BEST USE OF BRANDED CONTENT
+                                                </option>
+                                                <option value="BEST USE OF DIGITAL MEDIA">BEST USE OF DIGITAL MEDIA
+                                                </option>
+                                                <option value="BEST USE OF INFLUENCER">BEST USE OF INFLUENCER</option>
+                                                <option value="BRAND EXPERIENCE & PROMOTION">BRAND EXPERIENCE &
+                                                    PROMOTION</option>
+                                                <option value="CAMPAIGN FOR POSITIVITY (NEW)">CAMPAIGN FOR POSITIVITY
+                                                    (NEW)</option>
+                                                <option value="CAMPAIGN FOR SUSTAINABILITY">CAMPAIGN FOR SUSTAINABILITY
+                                                </option>
+                                                <option value="CAMPAIGN FOR WOMEN">CAMPAIGN FOR WOMEN</option>
+                                                <option value="COPYWRITING">COPYWRITING</option>
+                                                <option value="CREATIVE BUSINESS TRANSFORMATION (NEW)">CREATIVE
+                                                    BUSINESS TRANSFORMATION (NEW)</option>
+                                                <option value="EFFICACY">EFFICACY</option>
+                                                <option value="FILM">FILM</option>
+                                                <option value="FILM CRAFT">FILM CRAFT</option>
+                                                <option value="INNOVATION IN MEDIA">INNOVATION IN MEDIA</option>
+                                                <option value="INTEGRATED CAMPAIGN">INTEGRATED CAMPAIGN</option>
+                                                <option value="LONG TERM BRAND PLATFORM (NEW)">LONG TERM BRAND PLATFORM
+                                                    (NEW)</option>
+                                                <option value="LUXURY (NEW)">LUXURY (NEW)</option>
+                                                <option value="MOST CREATIVE USE OF MEDIA">MOST CREATIVE USE OF MEDIA
+                                                </option>
+                                                <option value="MOST EFFECTIVE USE OF MEDIA">MOST EFFECTIVE USE OF MEDIA
+                                                </option>
+                                                <option value="MUSIC / JINGLE">MUSIC / JINGLE</option>
+                                                <option value="NATIVE">NATIVE</option>
+                                                <option value="OUTDOOR">OUTDOOR</option>
+                                                <option value="PACKAGING">PACKAGING</option>
+                                                <option value="PR">PR</option>
+                                                <option value="PRINT & PUBLISHING">PRINT & PUBLISHING</option>
+                                                <option value="RURAL MARKETING">RURAL MARKETING</option>
+                                                <option value="SMALL-BUDGET MEDIA CAMPAIGN">SMALL-BUDGET MEDIA CAMPAIGN
+                                                </option>
+                                                <option value="TITANIUM">TITANIUM</option>
+                                            </select>
+                                            <div class="invalid-feedback text-uppercase">SELECT YOUR NOMINATION
+                                                CATEGORY</div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
+                                            <label for="validationName" class="form-label">
+                                                <b>Advertising Agency/Organization <span
+                                                        class="text-danger">*</span></b>
+                                            </label>
+                                            <input type="text" name="agency" class="form-control"
+                                                value="{{ old('agency') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your Advertising
+                                                Agency/Organization
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
+                                            <label for="validationName" class="form-label">
+                                                <b>Production House <span class="text-danger">*</span></b>
+                                            </label>
+                                            <input type="text" name="production_house" class="form-control"
+                                                value="{{ old('production_house') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your Production house
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
+                                            <label for="validationName" class="form-label">
+                                                <b>Brand Name <span class="text-danger">*</span></b>
+                                            </label>
+                                            <input type="text" name="brand" class="form-control"
+                                                value="{{ old('brand') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your brand name</div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
+                                            <label for="validationName" class="form-label">
+                                                <b>Type of Product Or Service <span class="text-danger">*</span></b>
+                                            </label>
+                                            <input type="text" name="type" class="form-control"
+                                                value="{{ old('type') }}" required>
+                                            <div class="invalid-feedback text-uppercase">Enter Your Type of Product Or
+                                                Service</div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
+                                            <label for="validationPhone" class="form-label">
+                                                <b>Campaign Duration (Start Date - End Date)</b>
+                                            </label>
+                                            <input type="text" id="daterange" name="date" class="form-control"
+                                                value="{{ old('date') }}">
+                                            <div class="invalid-feedback text-uppercase">Enter Your Campaign Duration
+                                            </div>
+                                            <p class="text-danger mt-2" style="font-size:.875em">CAMPAIGN DATE SHOULD
+                                                MATCH THE NF AND NOC</p>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-2">
+                                            <label for="validationPhone" class="form-label">
+                                                <b>Select Your Cost of Campaign <span class="text-danger">*</span></b>
+                                            </label>
+                                            <select name="cost" class="form-select">
+                                                <option value="">Select Cost of Campaign *</option>
+                                                <option value="BDT 0 - BDT 49,999">BDT 0 - BDT 49,999</option>
+                                                <option value="BDT 50,000 - BDT 99,999">BDT 50,000 - BDT 99,999
+                                                </option>
+                                                <option value="BDT 100,000 - BDT 249,999">BDT 100,000 - BDT 249,999
+                                                </option>
+                                                <option value="BDT 250,000 - BDT 499,999">BDT 250,000 - BDT 499,999
+                                                </option>
+                                                <option value="BDT 500,000 - BDT 999,999">BDT 500,000 - BDT 999,999
+                                                </option>
+                                                <option value="BDT 1 Million - BDT 9.9 Million">BDT 1 Million - BDT 9.9
+                                                    Million</option>
+                                                <option value="Over BDT 10 Million">Over BDT 10 Million</option>
+                                            </select>
+                                            <div class="invalid-feedback text-uppercase">SELECT YOUR Campaign Cost
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <u>
+                                        <h5 class="text-center text-uppercase">Campaign Story</h5>
+                                    </u>
+                                    <!--<p class="text-center text-muted">Detail Information About Your Campaign</p>-->
+                                    <div class="border p-3 shadow my-3">
+                                        <div class="my-4">
+                                            <label for="validationPhone" class="form-label">
+                                                Please Share the link containing Nomination Form, PPT, NOC, Case AV,
+                                                Campaign AV, Creatives, Case Board, Insights, and Logo <b><u>(Template &
+                                                        Format
+                                                        provided on the website)</u></b><span
+                                                    class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" name="link" placeholder="Share link here"
+                                                class="form-control" value="{{ old('link') }}" required>
+                                            <!--    <div class="invalid-feedback text-uppercase">Share link here</div>-->
+                                            <!--</div>-->
+                                        </div>
+                                    </div>
+                                    <u>
+                                        <h5 class="text-center text-uppercase">Team Member</h5>
+                                    </u>
+                                    <!--<p class="text-center text-muted">Detail Information About Your Team Member</p>-->
+                                    <div class="border p-3 shadow my-3">
+                                        <div class="my-4">
+                                            <div class="form-group order member-btn-opt">
+                                                <div class="my-4">
+                                                    <label for="validationPhone" class="form-label">
+                                                        <b>Please Share the Google Doc link</b> of the detailed
+                                                        information about your Team Members in the campaign (Campaign
+                                                        Title, Name & Designation)</u></b><span
+                                                            class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="text" name="member_name"
+                                                        placeholder="Share link here" class="form-control"
+                                                        value="{{ old('member_name') }}" required>
+                                                    <!--    <div class="invalid-feedback text-uppercase">Share link here</div>-->
+                                                    <!--</div>-->
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 text-center">
+                                                <button style="width: 120px;" type="submit"
+                                                    class="btn btn-primary">Submit</button>
+                                            </div>
+                                </form>
+                            </div>
+                        @else
+                            <div class="card-body">
+                                <h3 class="text-center text-danger">
+                                    Nomination submission window is now closed.
+                                </h3>
+                            </div>
+                        @endif
+                    @endif
+                    @if ($form_type == 'edit')
+                        @include('nomination.edit')
+                    @endif
+                </div>
+                <div class="card-footer text-muted text-center">
+                    @include('footer')
                 </div>
             </div>
-            <div class="mt-2 text-center">
-                <button style="width: 120px;" type="submit" class="btn btn-primary">Submit</button>
-            </div>
-            </form>
         </div>
-        @else
-        <div class="card-body">
-            <h3 class="text-center text-danger">
-                Nomination submission window is now closed.
-            </h3>
-        </div>
-        @endif
-        @endif
-        @if ($form_type == 'edit')
-        @include('nomination.edit')
-        @endif
-    </div>
-    <div class="card-footer text-muted text-center">
-        @include('footer')
-    </div>
-    </div>
-    </div>
     </div>
 
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.3.slim.min.js" integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
+        integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
@@ -625,16 +605,16 @@ $close = $time;
     </script>
 
     @php
-    $databaseDatetime = strtotime($theme->close);
+        $databaseDatetime = strtotime($theme->close);
 
-    // Calculate time remaining
-    $currentDatetime = time();
-    $timeRemaining = $databaseDatetime - $currentDatetime;
+        // Calculate time remaining
+        $currentDatetime = time();
+        $timeRemaining = $databaseDatetime - $currentDatetime;
 
-    // Send the time remaining to the client-side JavaScript
-    echo '<script>
-        var timeRemaining = ' . $timeRemaining . ';
-    </script>';
+        // Send the time remaining to the client-side JavaScript
+        echo '<script>
+            var timeRemaining = ' . $timeRemaining . ';
+        </script>';
     @endphp
     <script>
         // Receive the time remaining value from the server-side code
@@ -689,86 +669,192 @@ $close = $time;
     </script>
     @if (Carbon::now() <= $close)
         <script>
-        // Function to initialize the session timeout countdown
-        function startSessionTimeout() {
-        var timeoutMinutes = {{ config('session.lifetime', 30) }}-5; // Example: Replace with your actual session timeout in minutes
-        var timeoutSeconds = timeoutMinutes * 60;
-        var warningTime = timeoutSeconds - 300; // 60 seconds before timeout
+            // Function to initialize the session timeout countdown
+            function startSessionTimeout() {
+                var timeoutMinutes = {{ config('session.lifetime', 30) }} -
+                    5; // Example: Replace with your actual session timeout in minutes
+                var timeoutSeconds = timeoutMinutes * 60;
+                var warningTime = timeoutSeconds - 300; // 60 seconds before timeout
 
-        // Function to format seconds into minutes:seconds format
-        function formatTime(seconds) {
-        var min = Math.floor(seconds / 60);
-        var sec = seconds % 60;
-        return min + ':' + (sec < 10 ? '0' : '' ) + sec;
-            }
+                // Function to format seconds into minutes:seconds format
+                function formatTime(seconds) {
+                    var min = Math.floor(seconds / 60);
+                    var sec = seconds % 60;
+                    return min + ':' + (sec < 10 ? '0' : '') + sec;
+                }
 
-            // Function to update HTML elements
-            function updateTimes() {
-            document.getElementById('sessionTime').innerHTML='<span>' + formatTime(timeoutSeconds) + '</span>' ;
-            // document.getElementById('warningTime').innerHTML='<span>' + formatTime(warningTime) + '</span>' ;
-            }
+                // Function to update HTML elements
+                function updateTimes() {
+                    document.getElementById('sessionTime').innerHTML = '<span>' + formatTime(timeoutSeconds) + '</span>';
+                    // document.getElementById('warningTime').innerHTML='<span>' + formatTime(warningTime) + '</span>' ;
+                }
 
-            // Initial update
-            updateTimes();
+                // Initial update
+                updateTimes();
 
-            // Show initial warning
-            Swal.fire({
-            icon: 'warning' ,
-            title: 'Warning' ,
-            text: 'Your time is set to ' + timeoutMinutes + ' minutes. Please fill and submit within ' + timeoutMinutes + ' minutes.' ,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            confirmButtonText: 'OK'
-            }).then((result)=> {
-            if (result.isConfirmed) {
-            // Reset countdown and start
-            var intervalId = setInterval(function() {
-            timeoutSeconds--;
-            warningTime--;
-            updateTimes();
-
-            // Check if warning time is reached
-            if (warningTime === 0) {
-            Swal.fire({
-            icon: 'warning',
-            title: 'Warning',
-            text: 'Your session is about to expire in 5 minutes. Please finalize and submit your work promptly.',
-            timer: 10000, // Close alert after 10 seconds
-            timerProgressBar: true,
-            allowOutsideClick: false,
-            allowEscapeKey: false
-            });
-            }
-
-            // Check if session has expired
-            if (timeoutSeconds <= 0) {
-                clearInterval(intervalId); // Stop updating
+                // Show initial warning
                 Swal.fire({
-                icon: 'error' ,
-                title: 'Timeout' ,
-                text: 'Your session has timed out.' ,
-                showConfirmButton: false,
-                timer: 5000, // Close alert after 5 seconds
-                timerProgressBar: true,
-                willClose: ()=> {
-                // Reload the page after the alert is closed
-                window.location.reload();
-                }
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: 'Your time is set to ' + timeoutMinutes + ' minutes. Please fill and submit within ' +
+                        timeoutMinutes + ' minutes.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Reset countdown and start
+                        var intervalId = setInterval(function() {
+                            timeoutSeconds--;
+                            warningTime--;
+                            updateTimes();
+
+                            // Check if warning time is reached
+                            if (warningTime === 0) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Warning',
+                                    text: 'Your session is about to expire in 5 minutes. Please finalize and submit your work promptly.',
+                                    timer: 10000, // Close alert after 10 seconds
+                                    timerProgressBar: true,
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                            }
+
+                            // Check if session has expired
+                            if (timeoutSeconds <= 0) {
+                                clearInterval(intervalId); // Stop updating
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Timeout',
+                                    text: 'Your session has timed out.',
+                                    showConfirmButton: false,
+                                    timer: 5000, // Close alert after 5 seconds
+                                    timerProgressBar: true,
+                                    willClose: () => {
+                                        // Reload the page after the alert is closed
+                                        window.location.reload();
+                                    }
+                                });
+                            }
+                        }, 1000); // 1000 milliseconds = 1 second
+                    }
                 });
+            }
+
+            // Start the session timeout countdown when the page is loaded
+            startSessionTimeout();
+        </script>
+    @endif
+
+
+
+
+    @include('kill')
+
+    <script>
+        let lastActivityTime = new Date().getTime();
+        let lastMessageUpdate = 0;
+
+        const messages = [
+            "Please submit the form soon!",
+            "Your session is inactive.",
+            "Don't forget to submit your work!",
+            "Submit before it’s too late!",
+            "Hurry up and complete the form!",
+            "Time is running out — submit now!",
+            "Your data might be lost if you wait too long.",
+            "Almost there! Finish your submission.",
+            "Keep going! Submit your form.",
+            "Don't leave your form hanging!",
+            "Need help? Reach out before submitting.",
+            "Remember to save your progress.",
+            "Your input matters — submit soon!",
+            "Waiting too long? Submit now to be safe.",
+            "Submit before the session expires!",
+            "Final reminder: complete your submission.",
+            "Don't delay, submit today!",
+            "Act fast — the timer is ticking!",
+            "Submit your form to avoid losing changes.",
+            "Complete your task before time runs out!"
+        ];
+
+        // Reset on user activity
+        $(document.body).on("mousemove keypress click", function() {
+            lastActivityTime = new Date().getTime();
+            $('#inactive-time').text('0m 00s');
+            hideOverlay();
+            lastMessageUpdate = 0; // Reset message update timer
+            updateMessageText(""); // Clear message on activity
+        });
+
+        function hideOverlay() {
+            $('#inactivity-overlay').css({
+                opacity: 0,
+                pointerEvents: 'none'
+            });
+        }
+
+        function showOverlay() {
+            $('#inactivity-overlay').css({
+                opacity: 1,
+                pointerEvents: 'auto'
+            });
+        }
+
+        function getRandomMessage() {
+            const randomIndex = Math.floor(Math.random() * messages.length);
+            return messages[randomIndex];
+        }
+
+        function updateMessageText(text) {
+            $('#submit-warning').text(text);
+        }
+
+        function cycleMessages() {
+            const currentTime = new Date().getTime();
+            const inactivitySeconds = Math.floor((currentTime - lastActivityTime) / 1000);
+
+            if (inactivitySeconds >= 10) {
+                showOverlay();
+
+                // Update once every 5 seconds exactly
+                if (inactivitySeconds % 5 === 0 && inactivitySeconds !== lastMessageUpdate) {
+                    updateMessageText(getRandomMessage());
+                    lastMessageUpdate = inactivitySeconds;
                 }
-                }, 1000); // 1000 milliseconds = 1 second
-                }
-                });
-                }
+            } else {
+                hideOverlay();
+                lastMessageUpdate = 0; // Reset when user becomes active
+            }
 
-                // Start the session timeout countdown when the page is loaded
-                startSessionTimeout();
-                </script>
-                @endif
+            setTimeout(cycleMessages, 1000);
+        }
+
+        function updateInactiveTimeDisplay() {
+            const currentTime = new Date().getTime();
+            const inactivitySeconds = Math.floor((currentTime - lastActivityTime) / 1000);
+
+            const minutes = Math.floor(inactivitySeconds / 60);
+            const seconds = inactivitySeconds % 60;
+            const formattedTime = `${minutes}m ${seconds < 10 ? '0' : ''}${seconds}s`;
+
+            const $timeEl = $('#inactive-time');
+            $timeEl.text(formattedTime);
+
+            $timeEl.removeClass('animated');
+            void $timeEl[0].offsetWidth; // Force reflow
+            $timeEl.addClass('animated');
+
+            setTimeout(updateInactiveTimeDisplay, 1000);
+        }
+
+        // Start timers
+        updateInactiveTimeDisplay();
+        cycleMessages();
+    </script>
 
 
-
-
-                @include('kill')
-                <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-                <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>

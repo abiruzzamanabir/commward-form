@@ -122,9 +122,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
             color: #fff;
-            font-size: 2.5em;
+            font-size: 2em;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -132,27 +132,31 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s ease-in-out;
-            font-family: sans-serif;
+            font-family: 'Share Tech Mono', monospace;
             text-align: center;
         }
 
         .inactivity-wrapper {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px solid #ffffff30;
+            box-shadow: 0 0 20px #00000070;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.4em;
+            gap: 1rem;
+            max-width: 90%;
         }
 
         #inactive-time {
-            font-family: 'Share Tech Mono', monospace;
             font-size: 1.5em;
-            opacity: 0;
+            color: #00ffcc;
             animation: fadeIn 1s forwards;
         }
 
         #inactive-time.animated {
             animation: tick 0.4s ease-in-out, fadeIn 1s forwards;
-            display: inline-block;
         }
 
         @keyframes tick {
@@ -184,10 +188,11 @@
             <div class="col-md-12">
                 <div id="inactivity-overlay">
                     <div class="inactivity-wrapper">
-                        <div class="label">Inactive for</div>
-                        <div id="inactive-time" class="fade-in">0m 00s</div>
+                        <div class="label">You've been inactive</div>
+                        <div id="inactive-time">0m 00s</div>
                     </div>
                 </div>
+
                 <div class="card">
                     <div class="card-header text-center">
                         @if ($page == 'dashboard')
