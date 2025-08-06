@@ -12,7 +12,7 @@
     <title>Add Invoice</title>
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="shortcut icon" href="{{ asset('assets/img/'.$theme->favicon)}}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/img/' . $theme->favicon) }}" type="image/x-icon">
     <style>
         body {
             background-color: #f0f0f0;
@@ -49,8 +49,8 @@
         <div class="col-md-5 py-3 my-3">
             <div class="card shadow">
                 <div class="card-header text-center">
-                    <a href="{{$theme->url}}">
-                        <img width="150px" src="{{ asset('assets/img/'.$theme->logo)}}" alt="">
+                    <a href="{{ $theme->url }}">
+                        <img width="150px" src="{{ asset('assets/img/' . $theme->logo) }}" alt="">
                     </a>
                 </div>
 
@@ -80,9 +80,10 @@
                                     <input type="number" id="value" min="1" name="total"
                                         class="form-control" value="{{ old('total') }}" required>
                                     <div class="invalid-feedback">Enter Quantity Number</div>
-                                    <label for="validationName" class="form-label"><b>Total Amount (Including 15% VAT)<span
-                                                class="text-danger">*</span></b></label>
-                                    <input type="hidden" id="rate" class="form-control" value="{{$theme->amount}}">
+                                    <label for="validationName" class="form-label"><b>Total Amount (Including 15%
+                                            VAT)<span class="text-danger">*</span></b></label>
+                                    <input type="hidden" id="rate" class="form-control"
+                                        value="{{ $theme->amount }}">
                                     <input type="text" id="amount" name="amount" class="form-control"
                                         value="15000" required readonly>
                                     <div class="invalid-feedback"></div>
@@ -116,9 +117,10 @@
                                     <input type="number" id="value" min="1" name="total"
                                         class="form-control" value="{{ $edit->total }}" required>
                                     <div class="invalid-feedback">Enter Quantity Number</div>
-                                    <label for="validationName" class="form-label"><b>Total Amount (Including 15% VAT)<span
-                                                class="text-danger">*</span></b></label>
-                                    <input type="hidden" id="rate" class="form-control" value="{{$theme->amount}}">
+                                    <label for="validationName" class="form-label"><b>Total Amount (Including 15%
+                                            VAT)<span class="text-danger">*</span></b></label>
+                                    <input type="hidden" id="rate" class="form-control"
+                                        value="{{ $theme->amount }}">
                                     <input type="text" id="amount" name="amount" class="form-control"
                                         value="15000" required readonly>
                                     <div class="invalid-feedback"></div>
@@ -136,7 +138,7 @@
             </div>
         </div>
     </div>
-    @include('kill')
+    @include('feature.kill')
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
     </script>
     <script src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
