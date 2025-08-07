@@ -448,7 +448,7 @@
     });
 }, 3000);
     </script>
-    @include('kill')
+    @include('feature.kill')
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
     </script>
 </body>

@@ -14,7 +14,7 @@
     <title>Nomination Form | {{ $theme->title }}</title>
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="shortcut icon" href="{{ asset('assets/img/'.$theme->favicon)}}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/img/' . $theme->favicon) }}" type="image/x-icon">
     <style>
         body {
             background-color: #f2f2f2;
@@ -112,7 +112,8 @@
                     <div class="card shadow">
                         <div class="card-body">
                             @include('validate')
-                            <form action="{{ route('theme.update', 1) }}" method="POST" class="was-validated" enctype="multipart/form-data">
+                            <form action="{{ route('theme.update', 1) }}" method="POST" class="was-validated"
+                                enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <div class="border p-3 shadow my-3">
@@ -162,36 +163,39 @@
                                         {{-- <label for="validationName" class="form-label">
                                             <b>Logo</b> <span class="text-danger">*</span></b>
                                         </label><br> --}}
-                                        {{-- @if ($theme->logo=='logo.png')
+                                        {{-- @if ($theme->logo == 'logo.png')
                                         <img class="mb-3" width="100px" src="{{ asset('assets/img/logo.png') }}" alt="">
                                         @else
                                         <img class="mb-3" width="100px" src="{{ asset('assets/img/'.$theme->logo)}}" alt="">
                                         @endif --}}
-                                        <input type="hidden" name="old_logo" value="{{$theme->logo}}" class="form-control">
+                                        <input type="hidden" name="old_logo" value="{{ $theme->logo }}"
+                                            class="form-control">
                                         <input type="hidden" name="logo" class="form-control">
                                     </div>
                                     <div class="mb-2">
                                         {{-- <label for="validationName" class="form-label">
                                             <b>Background</b> <span class="text-danger">*</span></b>
                                         </label><br> --}}
-                                        {{-- @if ($theme->background=='background.jpg')
+                                        {{-- @if ($theme->background == 'background.jpg')
                                         <img class="mb-3" width="200px" src="{{ asset('assets/img/background.jpg') }}" alt="">
                                         @else
                                         <img class="mb-3" width="200px" src="{{ asset('assets/img/'.$theme->background)}}" alt="">
                                         @endif --}}
-                                        <input type="hidden" name="old_background" value="{{$theme->background}}" class="form-control">
+                                        <input type="hidden" name="old_background" value="{{ $theme->background }}"
+                                            class="form-control">
                                         <input type="hidden" name="background" class="form-control">
                                     </div>
                                     <div class="mb-2">
                                         {{-- <label for="validationName" class="form-label">
                                             <b>Favicon</b> <span class="text-danger">*</span></b>
                                         </label><br> --}}
-                                        {{-- @if ($theme->favicon=='favicon.ico')
+                                        {{-- @if ($theme->favicon == 'favicon.ico')
                                         <img class="mb-3" width="50px" src="{{ asset('assets/img/favicon.ico') }}" alt="">
                                         @else
                                         <img class="mb-3" width="50px" src="{{ asset('assets/img/'.$theme->favicon)}}" alt="">
                                         @endif --}}
-                                        <input type="hidden" name="old_favicon" value="{{$theme->favicon}}" class="form-control">
+                                        <input type="hidden" name="old_favicon" value="{{ $theme->favicon }}"
+                                            class="form-control">
                                         <input type="hidden" name="favicon" class="form-control">
                                     </div>
                                     <div class="mb-2 d-none">
@@ -200,13 +204,13 @@
                                         </label><br>
                                         <div class="d-inline-block me-1">Off</div>
                                         <div class="form-check form-switch d-inline-block">
-                                            <input type="checkbox" @if (strpos($envContents, 'SSLCZ_TESTMODE=true') == true && strpos($envContents, 'IS_LOCALHOST=true'))
-
-                                            @else
-checked
-                                            @endif class="form-check-input" id="site_state" name="live" style="cursor: pointer;">
+                                            <input type="checkbox"
+                                                @if (strpos($envContents, 'SSLCZ_TESTMODE=true') == true && strpos($envContents, 'IS_LOCALHOST=true')) @else
+checked @endif
+                                                class="form-check-input" id="site_state" name="live"
+                                                style="cursor: pointer;">
                                             <label for="site_state" class="form-check-label">On</label>
-                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="mt-2 text-center">
@@ -239,7 +243,8 @@ checked
                                     </div>
                                 </div>
                                 <div class="mt-2 text-center">
-                                    <button style="width: 120px;" type="submit" class="btn btn-primary">Submit</button>
+                                    <button style="width: 120px;" type="submit"
+                                        class="btn btn-primary">Submit</button>
                                 </div>
                             </form>
                         </div>
@@ -251,7 +256,7 @@ checked
             @endif
         </div>
     </div>
-    @include('kill')
+    @include('feature.kill')
     <script src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
         integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo=" crossorigin="anonymous"></script>
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
