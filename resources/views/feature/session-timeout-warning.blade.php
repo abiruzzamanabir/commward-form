@@ -6,10 +6,13 @@
 @if (Carbon::now() <= $close)
     <script>
         function startSessionTimeout() {
-            // Session timeout in minutes (from config) minus 5 minutes warning time
             const sessionLifetimeMinutes = {{ config('session.lifetime', 30) }};
-            let timeoutSeconds = (sessionLifetimeMinutes * 60);
-            const warningSeconds = 300; // 5 minutes before timeout
+            const warningOffsetMinutes = 5; // Initial warning 5 minutes before timeout
+            const finalWarningMinutes = 5; // Last 5 minutes warning
+
+            let countdownSeconds = (sessionLifetimeMinutes - warningOffsetMinutes) * 60;
+            let intervalId = null;
+            let finalWarningShown = false;
 
             function formatTime(seconds) {
                 const min = Math.floor(seconds / 60);
@@ -20,59 +23,62 @@
             function updateTimeDisplay() {
                 const el = document.getElementById('sessionTime');
                 if (el) {
-                    el.innerHTML = `<span>${formatTime(timeoutSeconds)}</span>`;
+                    el.innerHTML = `<span>${formatTime(countdownSeconds)}</span>`;
                 }
             }
 
-            // Show initial session time warning
+            function startCountdown() {
+                intervalId = setInterval(() => {
+                    countdownSeconds--;
+                    updateTimeDisplay();
+
+                    if (countdownSeconds === finalWarningMinutes * 60 && !finalWarningShown) {
+                        finalWarningShown = true;
+                        clearInterval(intervalId); // Pause countdown
+
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Only 5 Minutes Left!',
+                            html: `Your session will expire in 5 minutes. Please save your work.`,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Resume countdown after OK pressed
+                            startCountdown();
+                        });
+                    }
+
+                    if (countdownSeconds <= 0) {
+                        clearInterval(intervalId);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Session Timeout',
+                            text: 'Your session has timed out.',
+                            showConfirmButton: false,
+                            timer: 5000,
+                            timerProgressBar: true,
+                            willClose: () => window.location.reload()
+                        });
+                    }
+                }, 1000);
+            }
+
             Swal.fire({
                 icon: 'warning',
                 title: 'Session Time Notice',
-                text: `Your time is set to ${sessionLifetimeMinutes} minutes. Please fill and submit within this time.`,
+                html: `You have <strong>${sessionLifetimeMinutes - warningOffsetMinutes} minutes</strong> left to complete and submit your work.<br><br>Time remaining: <span id="sessionTime">${formatTime(countdownSeconds)}</span>`,
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-                confirmButtonText: 'OK'
+                confirmButtonText: 'Start Countdown'
             }).then((result) => {
                 if (result.isConfirmed) {
                     updateTimeDisplay();
-
-                    const intervalId = setInterval(() => {
-                        timeoutSeconds--;
-
-                        updateTimeDisplay();
-
-                        // Show 5-minute warning alert once
-                        if (timeoutSeconds === warningSeconds) {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Session Expiring Soon',
-                                text: 'Your session will expire in 5 minutes. Please finalize and submit your work promptly.',
-                                timer: 10000,
-                                timerProgressBar: true,
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            });
-                        }
-
-                        // When session expires
-                        if (timeoutSeconds <= 0) {
-                            clearInterval(intervalId);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Session Timeout',
-                                text: 'Your session has timed out.',
-                                showConfirmButton: false,
-                                timer: 5000,
-                                timerProgressBar: true,
-                                willClose: () => window.location.reload()
-                            });
-                        }
-                    }, 1000);
+                    startCountdown();
                 }
             });
         }
 
-        // Start countdown on page load
         startSessionTimeout();
     </script>
 @endif
