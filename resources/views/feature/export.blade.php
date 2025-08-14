@@ -26,9 +26,6 @@
             responsive: true,
             autoWidth: false,
             pageLength: 25,
-            order: [
-                [1, 'desc']
-            ]
         });
     });
 </script>

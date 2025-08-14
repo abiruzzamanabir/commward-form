@@ -22,17 +22,20 @@ class DashboardController extends Controller
     public function index()
     {
         $nomination = Nomination::where('trash', false)->get();
+
         $total = Nomination::where('trash', true)->get();
         $totalpv = Nomination::where('pv', true)->get();
         $invoice = Invoice::where('trash', false)->get();
+
         return view('dashboard.index', [
             'page' => 'dashboard',
-            'count' => count($total),
-            'countpv' => count($totalpv),
-            'invoice' => count($invoice),
+            'count' => $total->count(),
+            'countpv' => $totalpv->count(),
+            'invoice' => $invoice->count(),
             'all_nomination' => $nomination,
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -104,17 +107,17 @@ class DashboardController extends Controller
      */
     public function destroy($id)
     {
-        $delete_data= Nomination::findOrFail($id);
-        if ($delete_data->invoice != null){
-            $invoice=Invoice::where('invoice',$delete_data->invoice)->first();
+        $delete_data = Nomination::findOrFail($id);
+        if ($delete_data->invoice != null) {
+            $invoice = Invoice::where('invoice', $delete_data->invoice)->first();
             $invoice->update([
-                'used' => $invoice->used-1,
-                'available' => $invoice->available+1,
+                'used' => $invoice->used - 1,
+                'available' => $invoice->available + 1,
             ]);
         }
         $delete_data->delete();
 
-        return back() ->with('success','Data deleted successfully');
+        return back()->with('success', 'Data deleted successfully');
     }
     public function makePayment(Request $request)
     {
@@ -123,17 +126,17 @@ class DashboardController extends Controller
         // $user_data->notify(new PaymentNotification($user_data));
         Mail::to($request->email)->send(new MakePaymentMail($user_data));
         $update_date->update([
-            'paymentLinkSend' => $user_data->paymentLinkSend+1,
+            'paymentLinkSend' => $user_data->paymentLinkSend + 1,
         ]);
         return redirect()->route('dashboard.index')->with('success', 'Payment Link Successfully Send To ' . $user_data->name);
     }
     public function paymentConfirmation(Request $request)
     {
-        $order_information=Nomination::where('ukey', $request->ukey)->first();
+        $order_information = Nomination::where('ukey', $request->ukey)->first();
         $update_date = Nomination::findOrFail($order_information->id);
         $order_details = DB::table('orders')
-        ->where('transaction_id', $request->ukey)
-        ->select('transaction_id', 'status', 'currency', 'amount','card_issuer','tran_date')->first();
+            ->where('transaction_id', $request->ukey)
+            ->select('transaction_id', 'status', 'currency', 'amount', 'card_issuer', 'tran_date')->first();
         // Mail::to($order_information->email)->send(new NominationSubmitMail($order_information,$order_details));
 
 
@@ -161,10 +164,10 @@ class DashboardController extends Controller
         Mail::send('email.nomination', $user_data, function ($message) use ($user_data, $pdf) {
             $message->to($user_data["email"], $user_data["email"])
                 ->subject('Payment Confirmation Mail')
-                ->attachData($pdf->output(), "invoice-".$user_data["ukey"].' | '.time().".pdf");
+                ->attachData($pdf->output(), "invoice-" . $user_data["ukey"] . ' | ' . time() . ".pdf");
         });
         $update_date->update([
-            'confirmLinkSend' => $order_information->confirmLinkSend+1,
+            'confirmLinkSend' => $order_information->confirmLinkSend + 1,
         ]);
 
 
