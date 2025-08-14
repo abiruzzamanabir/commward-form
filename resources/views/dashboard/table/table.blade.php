@@ -2,12 +2,13 @@
     // Prefetch order details indexed by transaction_id for all nominations
     $orderDetailsMap = DB::table('orders')
         ->whereIn('transaction_id', $all_nomination->pluck('ukey'))
-        ->select('transaction_id', 'status', 'currency', 'amount', 'card_issuer')
-        ->orderByDesc('id')
+        ->select('transaction_id', 'status', 'currency', 'amount', 'card_issuer', 'id')
+        ->orderBy('id') // Ascending order by ID
         ->get()
-        ->groupBy('transaction_id')
-        ->map(fn($items) => $items->first());
+        ->groupBy('transaction_id') // Group by transaction_id
+        ->map(fn($items) => $items->first()); // Take the first (oldest) entry per transaction
 @endphp
+
 
 <table id="dashboard" class="table table-striped table-bordered table-hover align-middle text-center">
     <thead class="table-info sticky-top">
