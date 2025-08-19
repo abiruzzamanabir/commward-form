@@ -64,10 +64,10 @@ class SslCommerzPaymentController extends Controller
         $post_data['product_profile'] = "physical-goods";
 
         # OPTIONAL PARAMETERS
-        $post_data['value_a'] = "Digital Marketing Award 2024";
-        $post_data['value_b'] = "Digital Marketing Award 2024";
-        $post_data['value_c'] = "Digital Marketing Award 2024";
-        $post_data['value_d'] = "Digital Marketing Award 2024";
+        $post_data['value_a'] = "Commward 2025";
+        $post_data['value_b'] = "Commward 2025";
+        $post_data['value_c'] = "Commward 2025";
+        $post_data['value_d'] = "Commward 2025";
 
         #Before  going to initiate the payment order status need to insert or update as Pending.
         $update_product = DB::table('orders')
