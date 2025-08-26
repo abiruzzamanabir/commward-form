@@ -84,6 +84,13 @@
                             </div>
                         </form>
                     </td>
+                    @php
+                        $order = DB::table('orders')
+                            ->where('transaction_id', $item->ukey)
+                            ->select('transaction_id', 'status', 'currency', 'amount', 'card_issuer')
+                            ->orderBy('id', 'desc')
+                            ->first();
+                    @endphp
                     <td style="font-size:12px; min-width:150px;">
                         @if ($item->category === 'Innovation By Student')
                             <p class="mb-1">Free <span class="badge bg-success">Free</span></p>
