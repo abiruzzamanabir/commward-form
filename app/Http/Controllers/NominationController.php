@@ -33,7 +33,7 @@ class NominationController extends Controller
             'theme' => $theme,
         ]);
     }
-  	public function special()
+    public function special()
     {
         $invoice = Invoice::get()->unique('name');
         $theme = Theme::findOrFail(1);
@@ -219,6 +219,7 @@ class NominationController extends Controller
                 ]);
                 $update_date->update([
                     'invoice' => $request->invoice,
+                    'pv' => $request->pv,
                 ]);
                 $user_data = $update_date;
                 // $user_data->notify(new PaymentNotification($user_data));
