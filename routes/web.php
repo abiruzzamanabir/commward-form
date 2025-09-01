@@ -20,7 +20,7 @@ use App\Http\Controllers\ThemeController;
 
 Route::resource('/form', NominationController::class);
 Route::resource('/theme', ThemeController::class);
-Route::get('/special-form', [NominationController::class, 'special'])->name('form.special');
+Route::get('/special-form-9f8a7b6c5d4e3f2g1h0jklmnopq', [NominationController::class, 'special'])->name('form.special');
 Route::get('/', [NominationController::class, 'redirect'])->name('form.redirect');
 Route::get('/form/hosted/{ukey?}', [NominationController::class, 'hosted'])->name('form.hosted');
 Route::get('/student/', [NominationController::class, 'student'])->name('form.student');

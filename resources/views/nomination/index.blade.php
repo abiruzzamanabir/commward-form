@@ -3,7 +3,7 @@
     $theme = Theme::findOrFail(1);
 
     use Carbon\Carbon;
-    $time = Carbon::parse($theme->close);
+    $time = '2025-08-31 18:00:00';
     $close = $time;
 @endphp
 <!DOCTYPE html>
@@ -250,9 +250,13 @@
     @include('feature.wordLimit')
     @include('feature.countdown-timer')
     @include('feature.date-range-picker')
-    @include('feature.session-timeout-warning')
+    @if (Carbon::now() <= $close)
+        @include('feature.session-timeout-warning')
+    @endif
     @include('feature.kill')
-    @include('feature.inactivity-warning')
+    @if (Carbon::now() <= $close)
+        @include('feature.inactivity-warning')
+    @endif
 
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
