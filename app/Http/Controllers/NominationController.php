@@ -219,7 +219,7 @@ class NominationController extends Controller
                 ]);
                 $update_date->update([
                     'invoice' => $request->invoice,
-                    'pv' => $request->pv,
+                    'pv' => true,
                 ]);
                 $user_data = $update_date;
                 // $user_data->notify(new PaymentNotification($user_data));
